@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connecting TikTok</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 48px 16px; line-height: 1.6; color: #1a1a1a; background: #fff; text-align: center; }
+  code { display: block; word-break: break-all; background: #f2f2f2; padding: 12px; border-radius: 6px; margin: 12px 0; text-align: left; }
+  a { color: #0b5cad; }
+  @media (prefers-color-scheme: dark) { body { background: #111; color: #e6e6e6; } code { background: #222; } a { color: #6fb1ff; } }
+</style>
+</head>
+<body>
+<h1>Connecting to your dashboard&hellip;</h1>
+<p id="msg">If nothing happens in a few seconds, make sure your dashboard is running, then <a id="retry" href="#">click here</a>.</p>
+<div id="manual" hidden>
+  <p>Or copy this code into your dashboard:</p>
+  <code id="code"></code>
+</div>
+<script>
+  // Port your local dashboard listens on. Must match the dashboard's TikTok callback route.
+  var LOCAL_CALLBACK = "http://localhost:8765/tiktok/callback";
+
+  var params = window.location.search;
+  var target = LOCAL_CALLBACK + params;
+  var q = new URLSearchParams(params);
+
+  document.getElementById("retry").href = target;
+
+  if (q.get("error")) {
+    document.querySelector("h1").textContent = "TikTok connection was cancelled";
+    document.getElementById("msg").textContent = "Error: " + (q.get("error_description") || q.get("error")) + ". Close this tab and try again from your dashboard.";
+  } else if (q.get("code")) {
+    document.getElementById("code").textContent = q.get("code");
+    document.getElementById("manual").hidden = false;
+    window.location.replace(target);
+  } else {
+    document.querySelector("h1").textContent = "Nothing to connect";
+    document.getElementById("msg").textContent = "This page is used when connecting TikTok from the dashboard. Start the connection there.";
+  }
+</script>
+</body>
+</html>
